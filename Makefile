@@ -17,7 +17,9 @@ templ-install:
 		fi; \
 	fi
 tailwind-install:
+	@echo "test";
 	@if [ ! -f tailwindcss ]; then curl -sL https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 -o tailwindcss; fi
+	echo "test ended";
 	
 	@chmod +x tailwindcss
 
