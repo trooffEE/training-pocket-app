@@ -1,5 +1,6 @@
 services:
   app:
+    container_name: training-app-container
     build:
       context: .
       dockerfile: Dockerfile
@@ -20,6 +21,7 @@ services:
     networks:
       - network
   database:
+    container_name: training-db-container
     image: postgres:16-bullseye
     restart: unless-stopped
     environment:
@@ -29,7 +31,7 @@ services:
     ports:
       - "${DB_PORT}:5432"
     volumes:
-      - database_volume:/var/lib/postgresql/data
+      - ./data/data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}'"]
       interval: 5s
@@ -39,7 +41,5 @@ services:
     networks:
       - network
 
-volumes:
-  database_volume:
 networks:
   network:

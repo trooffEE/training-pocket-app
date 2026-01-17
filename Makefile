@@ -17,9 +17,7 @@ templ-install:
 		fi; \
 	fi
 tailwind-install:
-	@echo "test";
 	@if [ ! -f tailwindcss ]; then curl -sL https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 -o tailwindcss; fi
-	echo "test ended";
 	
 	@chmod +x tailwindcss
 
@@ -81,4 +79,23 @@ watch:
             fi; \
         fi
 
-.PHONY: all build run test clean watch tailwind-install docker-run docker-down itest templ-install
+# Create Migration
+install-migration:
+	@curl -fsSL https://packagecloud.io/golang-migrate/migrate/gpgkey | sudo gpg --dearmor -o /etc/apt/keyrings/migrate.gpg && echo "deb [signed-by=/etc/apt/keyrings/migrate.gpg] https://packagecloud.io/golang-migrate/migrate/ubuntu/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/migrate.list && apt-get update && apt-get install -y migrate
+
+create-dump:
+	DB_USER=${DB_USER} DB_NAME=${DB_NAME} sh ./internal/database/scripts/create_dump.sh
+
+apply-dump:
+	DB_USER=${DB_USER} DB_NAME=${DB_NAME} sh ./internal/database/scripts/apply_dump.sh
+
+migration-down: create-dump
+	migrate -path ./internal/database/migrations -database "postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}?sslmode=disable" -verbose \
+	down
+
+create-migration:
+	@read -p "Please provide migration name: " name && \
+		echo $$name && \
+		migrate create -ext sql -dir ./internal/database/migrations/ -seq $$name
+
+.PHONY: all build run test clean watch tailwind-install docker-run docker-down itest templ-install create-dump create-migration migration-down apply-dump install-migration
