@@ -1,0 +1,22 @@
+package web
+
+templ AuthForm() {
+    @Base() {
+        <form hx-post="/auth" method="POST" hx-target="#auth-container">
+            <label>
+                Email:
+                <input class="bg-gray-200 text-black p-2 border border-gray-400 rounded-lg" id="email" name="email" type="email"/>
+            </label>
+            <label>
+                Password:
+                <input class="bg-gray-200 text-black p-2 border border-gray-400 rounded-lg" id="password" name="password" type="password"/>
+            </label>
+            <button type="submit" class="bg-orange-500 hover:bg-orange-700 text-white py-2 px-4 rounded">Submit</button>
+        </form>
+        <div id="auth-container"></div>
+    }
+}
+
+templ AuthSuccess() {
+    <div>Success!</div>
+}
