@@ -39,7 +39,7 @@ templ LoginForm(err *FormResponse) {
 			<p>Войдите, чтобы продолжить</p>
 		</header>
 		<section>
-			<form class="form grid gap-6" hx-post="/auth" hx-target="#auth-container">
+			<form class="form grid gap-6" hx-post="/api/auth" hx-boost="true">
 				<div class="grid gap-2">
 					<label for="demo-card-form-email">E-mail</label>
 					<input
@@ -64,7 +64,7 @@ templ LoginForm(err *FormResponse) {
 				</div>
 				<footer class="flex flex-col items-center gap-2">
 					<button type="submit" class="btn w-full">Войти</button>
-					<button class="btn-outline w-full" hx-post="/web/components/auth/register" hx-swap="outerHTML" hx-sync="closest form:abort">Зарегистрироваться</button>
+					<button class="btn-outline w-full" hx-post="/web/components/auth/register" hx-target="#auth-container" hx-swap="outerHTML" hx-sync="closest form:abort">Зарегистрироваться</button>
 				</footer>
 			</form>
 		</section>

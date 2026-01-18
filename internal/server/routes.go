@@ -6,7 +6,6 @@ import (
 
 	"github.com/trooffEE/training-app/cmd/web"
 
-	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -14,6 +13,9 @@ import (
 
 func (s *Server) MountRoutes() http.Handler {
 	r := chi.NewRouter()
+	// csrfKey := mustGenerateCSRFKey()
+	// csrfMiddleware := csrf.Protect(csrfKey, csrf.TrustedOrigins([]string{"localhost:8080"}), csrf.FieldName("_csrf"))
+
 	r.Use(middleware.Logger)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
@@ -27,8 +29,7 @@ func (s *Server) MountRoutes() http.Handler {
 	r.Handle("/assets/*", fileServer)
 
 	r.Get("/health", s.healthHandler)
-	r.Get("/auth", templ.Handler(web.AuthPage()).ServeHTTP)
-	r.Post("/auth", web.AuthWebHandler)
+	r.Post("/api/auth", web.AuthWebHandler)
 	r.Post("/web/components/auth/register", web.RegisterWebHandler)
 	r.Post("/web/components/auth/login", web.LoginWebHandler)
 
