@@ -14,6 +14,6 @@ jobs:
       - name: Build API
         run: go build -v ./cmd/api
       - name: Build Telegram
-        run: go build -v ./cmd/telegram
+        run: go clean -modcache && go build -v ./cmd/telegram
       - name: Test with the Go CLI
         run: go test ./...
