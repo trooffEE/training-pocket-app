@@ -12,8 +12,8 @@ jobs:
         with:
           go-version: '1.25.1'
       - name: Build API
-        run: go build ./cmd/api/main.go -v
+        run: go build -v ./cmd/api/main.go
       - name: Build Telegram
-        run: go build ./cmd/telegram/main.go -v
+        run: go build -v ./cmd/telegram/main.go
       - name: Test with the Go CLI
         run: go test ./...
