@@ -6,16 +6,15 @@ import (
 	"net/http"
 
 	"github.com/trooffEE/training-app/internal/application/api/server"
-	"github.com/trooffEE/training-app/internal/application/core"
+	"github.com/trooffEE/training-app/internal/lib"
 )
 
 func main() {
-
 	server := server.NewServer()
 
 	done := make(chan bool, 1)
 
-	go core.GracefulShutdown(server, done)
+	go lib.GracefulShutdown(server, done)
 
 	err := server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
