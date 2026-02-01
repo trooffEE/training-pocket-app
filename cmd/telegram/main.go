@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/trooffEE/training-app/internal/application/telegram/commander"
 	"github.com/trooffEE/training-app/internal/application/telegram/server"
 	"github.com/trooffEE/training-app/internal/lib"
 )
@@ -15,6 +16,8 @@ func main() {
 	done := make(chan bool, 1)
 
 	go lib.GracefulShutdown(server, done)
+	tree := commander.LoadNavigationTree("./internal/config/client_navigation_tree.yaml")
+	fmt.Println(tree)
 
 	err := server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
