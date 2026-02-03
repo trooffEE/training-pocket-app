@@ -1,29 +1,25 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
+	"context"
+	"os/signal"
+	"syscall"
 
-	"github.com/trooffEE/training-app/internal/application/telegram/commander"
+	"github.com/trooffEE/training-app/internal/application/telegram"
+	"github.com/trooffEE/training-app/internal/application/telegram/config"
 	"github.com/trooffEE/training-app/internal/application/telegram/server"
-	"github.com/trooffEE/training-app/internal/lib"
 )
 
 func main() {
-	server := server.NewServer()
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer cancel()
 
-	done := make(chan bool, 1)
+	cfg := config.New()
+	httpShutdown := server.Init(ctx, cfg)
+	appShutdown := telegram.Start(ctx, cfg)
 
-	go lib.GracefulShutdown(server, done)
-	tree := commander.LoadNavigationTree("./internal/config/client_navigation_tree.yaml")
-	fmt.Println(tree)
+	<-ctx.Done()
 
-	err := server.ListenAndServe()
-	if err != nil && err != http.ErrServerClosed {
-		panic(fmt.Sprintf("http server error: %s", err))
-	}
-
-	<-done
-	log.Println("Graceful shutdown complete.")
+	appShutdown()
+	httpShutdown()
 }

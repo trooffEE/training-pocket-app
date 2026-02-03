@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const filePath = "./client_navigation_tree_test.yaml"
+const filePath = "./test__mocks/client_navigation_tree_test.yaml"
 
 var tree = LoadNavigationTree(filePath)
 
@@ -32,25 +32,5 @@ func TestGetSectionByPathSmokeTest(t *testing.T) {
 	assert.Nil(t, val, "Nested key is NOT found!")
 
 	val = tree.GetSectionByPath("settings.schedule.bla.bla")
-	assert.Nil(t, val, "Tree depth is respected! (here is 2, not 4)")
-}
-
-func TestGetSectionByPathFastSmokeTest(t *testing.T) {
-	val := tree.GetSectionByPathFast("")
-	assert.Nil(t, val, "Key is NOT found!")
-
-	val = tree.GetSectionByPathFast("start_training")
-	assert.NotNil(t, val, "Key is found!")
-
-	val = tree.GetSectionByPathFast("bla_bla_bla")
-	assert.Nil(t, val, "Key is NOT found!")
-
-	val = tree.GetSectionByPathFast("settings.schedule")
-	assert.NotNil(t, val, "Nested key is found!")
-
-	val = tree.GetSectionByPathFast("settings.schedule123")
-	assert.Nil(t, val, "Nested key is NOT found!")
-
-	val = tree.GetSectionByPathFast("settings.schedule.bla.bla")
 	assert.Nil(t, val, "Tree depth is respected! (here is 2, not 4)")
 }

@@ -31,16 +31,9 @@ services:
       - ${TELEGRAM_WEB_SERVER_PORT}:${TELEGRAM_WEB_SERVER_PORT}
     environment:
       TELEGRAM_WEB_SERVER_PORT: ${TELEGRAM_WEB_SERVER_PORT}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_DATABASE: ${DB_DATABASE}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
     depends_on:
       app:
         condition: service_started
-      database:
-        condition: service_healthy
     networks:
       - network
   database:

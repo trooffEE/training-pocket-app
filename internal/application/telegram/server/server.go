@@ -1,31 +1,38 @@
 package server
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"net/http"
-	"os"
-	"strconv"
+	"sync"
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/trooffEE/training-app/internal/application/telegram/config"
+	"go.uber.org/zap"
 )
 
-type Server struct {
-	port int
-}
-
-func NewServer() *http.Server {
-	port, _ := strconv.Atoi(os.Getenv("TELEGRAM_WEB_SERVER_PORT"))
-	NewServer := &Server{port: port}
-
-	// Declare Server config
+func Init(ctx context.Context, cfg config.Config) func() {
 	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", NewServer.port),
-		Handler:      nil,
-		IdleTimeout:  time.Minute,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 30 * time.Second,
+		Addr:    fmt.Sprintf(":%s", cfg.Port),
+		Handler: nil,
 	}
 
-	return server
+	var wg sync.WaitGroup
+	wg.Go(func() {
+		if err := server.ListenAndServe(); err != nil && !errors.Is(http.ErrServerClosed, err) {
+			zap.L().Fatal("http server failed to start on port", zap.String("port", cfg.Port), zap.Error(err))
+		}
+	})
+	zap.L().Info("🏆 http server started on port", zap.String("port", cfg.Port))
+
+	return func() {
+		_ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+		defer cancel()
+		if err := server.Shutdown(_ctx); err != nil {
+			zap.L().Fatal("http server failed to shutdown", zap.Error(err))
+		}
+		wg.Wait()
+	}
 }
